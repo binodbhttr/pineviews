@@ -12,7 +12,7 @@ sma_length = input.int(50, title="SMA Length")
 ema_length = input.int(50, title="EMA Length")
 atr_length = input.int(14, title="ATR Length")
 projection_factor = input.float(1.5, title="Projection Factor for Expected High/Low")
-sensitivity = input.float(0.1, title="Sensitivity Tuner", minval=0.1, maxval=2.0, step=0.1)
+sensitivity = input.float(0.7, title="Sensitivity Tuner", minval=0.1, maxval=2.0, step=0.1)
 arrow_length = input.int(10, title="Arrow Length in Bars", minval=1, maxval=50)
 
 // RSI
@@ -49,15 +49,15 @@ stochK = ta.stoch(close, high, low, stoch_length)
 stoch_score = stochK / 100
 
 // Volume Spread Analysis (VSA)
-avg_volume = ta.sma(volume, 20)
+avg_volume = ta.sma(volume, 50)
 vsa_score = (close > open and volume > avg_volume) ? 0.03 : (close < open and volume > avg_volume) ? -0.03 : 0
 
 // Composite Metric
 composite_metric = (rsi_score + macd_score + bb_score + ma_score + stoch_score) / 5 + vsa_score
 
 // Entry conditions
-buy_signal = composite_metric >= 0.9
-sell_signal = composite_metric <= 0.1
+buy_signal = composite_metric >= 0.8
+sell_signal = composite_metric <= 0.2
 
 // Advanced Expected High/Low Calculation with Sensitivity Tuner
 atr = ta.atr(atr_length)
