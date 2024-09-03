@@ -84,3 +84,6 @@ if (buy_signal)
 
 if (sell_signal)
     expected_low_line := line.new(x1=bar_index, y1=expected_low, x2=bar_index + arrow_length, y2=expected_low, color=color.red, width=1, style=line.style_arrow_right)
+
+// This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © BullBearWizard318
