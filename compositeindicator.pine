@@ -70,10 +70,10 @@ expected_high = close + (atr * projection_factor * sensitivity) + momentum_adjus
 expected_low = close - (atr * projection_factor * sensitivity) + momentum_adjustment
 
 // Plotting Buy/Sell signals
-plotshape(buy_signal and vsa_score > 0, title="Buy Signal (VSA)", location=location.belowbar, color=color.green, style=shape.labelup, text="BUY*", offset=-1)
-plotshape(buy_signal and vsa_score == 0, title="Buy Signal", location=location.belowbar, color=color.green, style=shape.labelup, text="BUY", offset=-1)
-plotshape(sell_signal and vsa_score < 0, title="Sell Signal (VSA)", location=location.abovebar, color=color.red, style=shape.labeldown, text="SELL*", offset=-1)
-plotshape(sell_signal and vsa_score == 0, title="Sell Signal", location=location.abovebar, color=color.red, style=shape.labeldown, text="SELL", offset=-1)
+plotshape(buy_signal and vsa_score > 0, title="Buy Signal (VSA)", location=location.belowbar, color=color.green, style=shape.labelup, text="BUY*")
+plotshape(buy_signal and vsa_score == 0, title="Buy Signal", location=location.belowbar, color=color.green, style=shape.labelup, text="BUY")
+plotshape(sell_signal and vsa_score < 0, title="Sell Signal (VSA)", location=location.abovebar, color=color.red, style=shape.labeldown, text="SELL*")
+plotshape(sell_signal and vsa_score == 0, title="Sell Signal", location=location.abovebar, color=color.red, style=shape.labeldown, text="SELL")
 
 // Plotting Expected High/Low levels as horizontal arrows
 var line expected_high_line = na
