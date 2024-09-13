@@ -1,0 +1,57 @@
+// This Pine Script code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © BullBearWizard318
+//@version=5
+indicator("ADX & DI w/dyn_th", overlay=false)
+//ADX and DI with dynamic threshold set using average adx from certain number of periods
+// Inputs
+len = input(14, title="Length")
+th_period = input.int(50, title="Threshold Period",minval=5, maxval=200, step=5)
+fixed_th = input.int(20, title="Fixed Minimum Threshold",minval=10, maxval=40, step=5)
+smoothing_method = input.string("SMA", options=["SMA", "EMA"], title="Smoothing Method")
+
+// Calculate True Range (using built-in function)
+true_range = ta.tr(true)
+
+// Directional Movement
+plus_dm = math.max(high - high[1], 0)
+minus_dm = math.max(low[1] - low, 0)
+
+// Smoothed True Range and Directional Movement (using dynamic smoothing method)
+smoothed_true_range = smoothing_method == "SMA" ? ta.sma(true_range, len) : ta.ema(true_range, len)
+smoothed_plus_dm = smoothing_method == "SMA" ? ta.sma(plus_dm, len) : ta.ema(plus_dm, len)
+smoothed_minus_dm = smoothing_method == "SMA" ? ta.sma(minus_dm, len) : ta.ema(minus_dm, len)
+
+// Calculate Directional Indexes
+di_plus = (smoothed_plus_dm / smoothed_true_range) * 100
+di_minus = (smoothed_minus_dm / smoothed_true_range) * 100
+
+// Calculate Directional Movement Index (DX) and ADX
+dx = math.abs(di_plus - di_minus) / (di_plus + di_minus) * 100
+adx = ta.sma(dx, len)
+
+
+// Dynamic threshold: average ADX over the last th_period periods, but with a fixed minimum threshold
+dynamic_th = math.max(ta.sma(adx, th_period), fixed_th)
+
+// Plot DI+ and DI- with customizable colors
+plot(di_plus, color=color.green, title="DI+", linewidth=1)
+plot(di_minus, color=color.red, title="DI-", linewidth=1)
+
+// Plot ADX and Dynamic Threshold
+plot(adx, color=color.navy, title="ADX", linewidth=1)
+//plot(volume_weighted_adx, color=color.blue, title="VADX", linewidth=1)
+
+plot(dynamic_th, title="Dynamic Threshold", color=color.new(color.gray,50), linewidth=1, style=plot.style_line)
+
+// Option to highlight the background based on ADX crossing the dynamic threshold
+bgcolor(adx > fixed_th and di_plus > fixed_th and di_minus < fixed_th ? color.new(color.green, 90) : na, title="Uptrend Indicator")
+bgcolor(adx > fixed_th and di_minus > fixed_th and di_plus < fixed_th ? color.new(color.red, 90) : na, title="Downtrend Indicator")
+
+// Detect when both DI+ and DI- are strong but ADX is weak
+weak_di = ((di_plus > fixed_th and di_minus < fixed_th) or (di_minus > fixed_th and di_plus < fixed_th)) and (adx < fixed_th)
+// Highlight when DI+ and DI- are strong but ADX is weak (no clear trend)
+bgcolor(weak_di ? color.new(color.orange, 80) : na, title="Warning: DI+ and DI- Strong but ADX Weak")
+
+
+// Add a horizontal line for fixed threshold
+hline(fixed_th, "Threshold", color=color.new(color.black,10), linestyle=hline.style_dotted)
